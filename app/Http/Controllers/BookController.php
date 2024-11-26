@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Book;
-use App\Services\BookService;
 use App\Http\Requests\BookRequest;
+use App\Services\BookService;
+use App\Http\Resources\BookResource;
 
 class BookController extends Controller
 {
@@ -17,36 +17,26 @@ class BookController extends Controller
 
     public function index()
     {
-        return response()->json($this->bookService->getAllBooks());
+        $books = $this->bookService->list();
+        return BookResource::collection($books);
     }
 
     public function store(BookRequest $request)
     {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'author_id' => 'required|exists:authors,id',
-            'category_id' => 'required|exists:categories,id',
-        ]);
-        return response()->json($this->bookService->createBook($request->all()), 201);
-    }
-
-    public function show($id)
-    {
-        return response()->json($this->bookService->getBook($id));
+        $book = $this->bookService->create($request->validated());
+        return new BookResource($book);
     }
 
     public function update(BookRequest $request, $id)
     {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'author_id' => 'required|exists:authors,id',
-            'category_id' => 'required|exists:categories,id',
-        ]);
-        return response()->json($this->bookService->updateBook($id, $request->all()));
+        $book = $this->bookService->update($id, $request->validated());
+        return new BookResource($book);
     }
 
     public function destroy($id)
     {
-        return response()->json($this->bookService->deleteBook($id));
+        $this->bookService->delete($id);
+        return response()->json(['message' => 'Book deleted successfully']);
     }
 }
+

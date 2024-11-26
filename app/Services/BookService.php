@@ -2,36 +2,34 @@
 
 namespace App\Services;
 
-use App\Models\Book;
+use App\Repositories\BookRepository;
 
 class BookService
 {
-    public function getAllBooks()
+    protected $bookRepository;
+
+    public function __construct(BookRepository $bookRepository)
     {
-        return Book::with(['author', 'category'])->get();
+        $this->bookRepository = $bookRepository;
     }
 
-    public function createBook(array $data)
+    public function list()
     {
-        return Book::create($data);
+        return $this->bookRepository->all();
     }
 
-    public function getBook($id)
+    public function create(array $data)
     {
-        return Book::with(['author', 'category'])->findOrFail($id);
+        return $this->bookRepository->create($data);
     }
 
-    public function updateBook($id, array $data)
+    public function update(int $id, array $data)
     {
-        $book = Book::findOrFail($id);
-        $book->update($data);
-        return $book;
+        return $this->bookRepository->update($id, $data);
     }
 
-    public function deleteBook($id)
+    public function delete(int $id)
     {
-        $book = Book::findOrFail($id);
-        $book->delete();
-        return response()->json(['message' => 'Book deleted successfully']);
+        return $this->bookRepository->delete($id);
     }
 }

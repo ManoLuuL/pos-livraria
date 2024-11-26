@@ -2,17 +2,18 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class User extends Authenticatable
-{
-    use HasFactory;
 
+class User extends Authenticatable implements JWTSubject
+{
     protected $fillable = ['name', 'email', 'password'];
 
-    protected $hidden = ['password'];
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
 
     public function getJWTIdentifier()
     {

@@ -1,31 +1,64 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
+use App\Http\Middleware\JwtMiddleware;
 
-Route::prefix('auth')->group(function () {
-    Route::post('login', [AuthController::class, 'login']);
-    Route::post('register', [AuthController::class, 'register']);
+// Rotas de autenticação (públicas)
+Route::controller(UserController::class)->group(function () {
+    Route::post('/register', 'register'); // Registro de usuário
+    Route::post('/login', 'login');       // Login do usuário
 });
 
-Route::get('books', [BookController::class, 'index']); 
+// Rotas públicas (sem autenticação)
+Route::controller(BookController::class)->group(function () {
+    Route::get('/books', 'index'); // Listar livros
+});
 
-// Rotas protegidas (com autenticação)
-Route::middleware('auth:api')->group(function () {
-    Route::apiResource('books', BookController::class)->except(['index']);
-    Route::apiResource('orders', OrderController::class);
-   
-    Route::get('authors', [AuthorController::class, 'index']);
-    Route::get('authors/{id}', [AuthorController::class, 'show']);
-    Route::post('authors', [AuthorController::class, 'store']);
+Route::controller(CategoryController::class)->group(function () {
+    Route::get('/categories', 'index'); // Listar categorias
+});
 
-    Route::get('categories', [CategoryController::class, 'index']);
-    Route::get('categories/{id}', [CategoryController::class, 'show']);
-    Route::post('categories', [CategoryController::class, 'store']);
+Route::controller(AuthorController::class)->group(function () {
+    Route::get('/authors', 'index'); // Listar autores
+});
+
+// Rotas protegidas (JWT middleware)
+Route::middleware(JwtMiddleware::class)->group(function () {
+
+    // CRUD de livros (exceto listagem)
+    Route::controller(BookController::class)->group(function () {
+        Route::post('/books', 'store');   // Criar livro
+        Route::get('/books/{id}', 'show'); // Exibir livro
+        Route::patch('/books/{id}', 'update'); // Atualizar livro
+        Route::delete('/books/{id}', 'destroy'); // Deletar livro
+    });
     
-    Route::get('me', [AuthController::class, 'me']);
-    Route::post('logout', [AuthController::class, 'logout']);
+    // CRUD de categorias (exceto listagem)
+    Route::controller(CategoryController::class)->group(function () {
+        Route::post('/categories', 'store'); // Criar categoria
+        Route::get('/categories/{id}', 'show'); // Exibir categoria
+        Route::patch('/categories/{id}', 'update'); // Atualizar categoria
+        Route::delete('/categories/{id}', 'destroy'); // Deletar categoria
+    });
+
+    // CRUD de autores (sem atualização, apenas criação e exclusão)
+    Route::controller(AuthorController::class)->group(function () {
+        Route::post('/authors', 'store');   // Criar autor
+        Route::get('/authors/{id}', 'show'); // Exibir autor
+        Route::delete('/authors/{id}', 'destroy'); // Deletar autor
+    });
+    
+    // CRUD de ordens
+    Route::controller(OrderController::class)->group(function () {
+        Route::post('/orders', 'store');    // Criar ordem
+        Route::get('/orders/{id}', 'show'); // Exibir ordem
+        Route::get('/orders', 'index');    // Listar ordens
+        Route::patch('/orders/{id}', 'update'); // Atualizar ordem
+        Route::delete('/orders/{id}', 'destroy'); // Deletar ordem
+    });
 });

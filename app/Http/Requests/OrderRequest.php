@@ -15,8 +15,10 @@ class OrderRequest extends FormRequest
     {
         return [
             'user_id' => 'required|exists:users,id',
-            'book_id' => 'required|exists:books,id',
-            'quantity' => 'required|integer|min:1',
+            'book_ids' => 'required|array',
+            'book_ids.*' => 'exists:books,id',
+            'total_price' => 'required|numeric|min:0',
         ];
     }
 }
+

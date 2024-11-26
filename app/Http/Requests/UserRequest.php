@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class AuthorRequest extends FormRequest
+class UserRequest extends FormRequest
 {
     public function authorize()
     {
@@ -14,8 +14,9 @@ class AuthorRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|string|max:255|unique:authors,name',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:8|confirmed',
         ];
     }
 }
-

@@ -2,25 +2,35 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Author;
+use App\Http\Requests\AuthorRequest;
+use App\Services\AuthorService;
+use App\Http\Resources\AuthorResource;
 
 class AuthorController extends Controller
 {
+    protected $authorService;
+
+    public function __construct(AuthorService $authorService)
+    {
+        $this->authorService = $authorService;
+    }
+
     public function index()
     {
-        return response()->json(Author::all());
+        $authors = $this->authorService->list();
+        return AuthorResource::collection($authors);
     }
 
-    public function show($id)
+    public function store(AuthorRequest $request)
     {
-        return response()->json(Author::findOrFail($id));
+        $author = $this->authorService->create($request->validated());
+        return new AuthorResource($author);
     }
 
-    public function store(Request $request)
+    public function destroy($id)
     {
-        $request->validate(['name' => 'required|string|max:255']);
-        $author = Author::create($request->all());
-        return response()->json($author, 201);
+        $this->authorService->delete($id);
+        return response()->json(['message' => 'Author deleted successfully']);
     }
 }
+

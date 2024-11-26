@@ -8,17 +8,17 @@ class BookRequest extends FormRequest
 {
     public function authorize()
     {
-        return true; 
+        return true;
     }
 
     public function rules()
     {
         return [
             'title' => 'required|string|max:255',
-            'author_id' => 'required|exists:authors,id',
+            'description' => 'nullable|string',
             'category_id' => 'required|exists:categories,id',
-            'published_date' => 'required|date',
-            'price' => 'required|numeric',
+            'author_id' => 'required|exists:authors,id',
         ];
     }
 }
+

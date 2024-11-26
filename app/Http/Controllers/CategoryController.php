@@ -2,25 +2,41 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Category;
+use App\Http\Requests\CategoryRequest;
+use App\Services\CategoryService;
+use App\Http\Resources\CategoryResource;
 
 class CategoryController extends Controller
 {
+    protected $categoryService;
+
+    public function __construct(CategoryService $categoryService)
+    {
+        $this->categoryService = $categoryService;
+    }
+
     public function index()
     {
-        return response()->json(Category::all());
+        $categories = $this->categoryService->list();
+        return CategoryResource::collection($categories);
     }
 
-    public function show($id)
+    public function store(CategoryRequest $request)
     {
-        return response()->json(Category::findOrFail($id));
+        $category = $this->categoryService->create($request->validated());
+        return new CategoryResource($category);
     }
 
-    public function store(Request $request)
+    public function update(CategoryRequest $request, $id)
     {
-        $request->validate(['name' => 'required|string|max:255']);
-        $category = Category::create($request->all());
-        return response()->json($category, 201);
+        $category = $this->categoryService->update($id, $request->validated());
+        return new CategoryResource($category);
+    }
+
+    public function destroy($id)
+    {
+        $this->categoryService->delete($id);
+        return response()->json(['message' => 'Category deleted successfully']);
     }
 }
+

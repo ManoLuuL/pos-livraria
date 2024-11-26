@@ -2,12 +2,34 @@
 
 namespace App\Services;
 
-use App\Models\Order;
+use App\Repositories\OrderRepository;
 
 class OrderService
 {
-    public function createOrder(array $data)
+    protected $orderRepository;
+
+    public function __construct(OrderRepository $orderRepository)
     {
-        return Order::create($data);
+        $this->orderRepository = $orderRepository;
+    }
+
+    public function list()
+    {
+        return $this->orderRepository->all();
+    }
+
+    public function create(array $data)
+    {
+        return $this->orderRepository->create($data);
+    }
+
+    public function update(int $id, array $data)
+    {
+        return $this->orderRepository->update($id, $data);
+    }
+
+    public function delete(int $id)
+    {
+        return $this->orderRepository->delete($id);
     }
 }
