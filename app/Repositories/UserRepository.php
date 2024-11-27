@@ -11,13 +11,14 @@ class UserRepository
         return User::create($data);
     }
 
-    public function findByEmail(string $email)
+    public function findByEmail($email)
     {
         return User::where('email', $email)->first();
     }
 
-    public function find(int $id)
+    public function find($id)
     {
         return User::findOrFail($id);
     }
 }
+

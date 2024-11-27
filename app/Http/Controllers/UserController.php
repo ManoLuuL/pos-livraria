@@ -19,11 +19,9 @@ class UserController extends Controller
     public function register(UserRequest $request)
     {
         $user = $this->userService->register($request->validated());
-        return response()->json([
-            'message' => 'User registered successfully',
-            'user' => $user,
-        ], 201);
+        return new UserResource($user);
     }
+
     public function login(LoginRequest $request)
     {
         $token = $this->userService->login($request->validated());
