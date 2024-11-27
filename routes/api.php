@@ -11,7 +11,7 @@ use App\Http\Middleware\JwtMiddleware;
 Route::prefix('auth')->group(function () {
     Route::post('login', [UserController::class, 'login']);
     Route::post('register', [UserController::class, 'register']);
-    Route::post('logout', [UserController::class, 'logout'])->middleware('jwt');
+    
 });
 
 
@@ -20,9 +20,11 @@ Route::get('/categories', [CategoryController::class, 'index']);
 Route::get('/authors', [AuthorController::class, 'index']);
 
 // Rotas protegidas (JWT middleware)
-Route::middleware('jwt')->group(function () {
+Route::middleware(JwtMiddleware::class)->group(function () {
     Route::resource('books', BookController::class)->except(['index']);
     Route::resource('categories', CategoryController::class)->except(['index']);
-    Route::resource('authors', AuthorController::class)->except(['index', 'edit', 'update']);
+    Route::resource('authors', AuthorController::class)->except(['index']);
     Route::resource('orders', OrderController::class);
+
+    Route::post('logout', [UserController::class, 'logout']);
 });
