@@ -6,9 +6,14 @@ use App\Models\Order;
 
 class OrderRepository
 {
-    public function all()
+    public function getAll()
     {
-        return Order::all();
+        return Order::with('books')->paginate();
+    }
+
+    public function getById($id)
+    {
+        return Order::with('books')->findOrFail($id);
     }
 
     public function create(array $data)
@@ -16,21 +21,14 @@ class OrderRepository
         return Order::create($data);
     }
 
-    public function find(int $id)
+    public function update(Order $order, array $data)
     {
-        return Order::findOrFail($id);
-    }
-
-    public function update(int $id, array $data)
-    {
-        $order = $this->find($id);
         $order->update($data);
         return $order;
     }
 
-    public function delete(int $id)
+    public function delete(Order $order)
     {
-        $order = $this->find($id);
-        return $order->delete();
+        $order->delete();
     }
 }

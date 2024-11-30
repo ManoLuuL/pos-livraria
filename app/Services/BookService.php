@@ -6,30 +6,37 @@ use App\Repositories\BookRepository;
 
 class BookService
 {
-    protected $bookRepository;
+    protected $repository;
 
-    public function __construct(BookRepository $bookRepository)
+    public function __construct(BookRepository $repository)
     {
-        $this->bookRepository = $bookRepository;
+        $this->repository = $repository;
     }
 
-    public function list()
+    public function getAllBooks()
     {
-        return $this->bookRepository->all();
+        return $this->repository->getAll();
     }
 
-    public function create(array $data)
+    public function getBookById($id)
     {
-        return $this->bookRepository->create($data);
+        return $this->repository->getById($id);
     }
 
-    public function update(int $id, array $data)
+    public function createBook(array $data)
     {
-        return $this->bookRepository->update($id, $data);
+        return $this->repository->create($data);
     }
 
-    public function delete(int $id)
+    public function updateBook($id, array $data)
     {
-        return $this->bookRepository->delete($id);
+        $book = $this->repository->getById($id);
+        return $this->repository->update($book, $data);
+    }
+
+    public function deleteBook($id)
+    {
+        $book = $this->repository->getById($id);
+        return $this->repository->delete($book);
     }
 }

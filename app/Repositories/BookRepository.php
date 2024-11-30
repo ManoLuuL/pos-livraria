@@ -6,9 +6,14 @@ use App\Models\Book;
 
 class BookRepository
 {
-    public function all()
+    public function getAll()
     {
-        return Book::all();
+        return Book::with(['author', 'category'])->paginate();
+    }
+
+    public function getById($id)
+    {
+        return Book::with(['author', 'category'])->findOrFail($id);
     }
 
     public function create(array $data)
@@ -16,21 +21,14 @@ class BookRepository
         return Book::create($data);
     }
 
-    public function find($id)
+    public function update(Book $book, array $data)
     {
-        return Book::findOrFail($id);
-    }
-
-    public function update($id, array $data)
-    {
-        $book = $this->find($id);
         $book->update($data);
         return $book;
     }
 
-    public function delete($id)
+    public function delete(Book $book)
     {
-        $book = $this->find($id);
         return $book->delete();
     }
 }

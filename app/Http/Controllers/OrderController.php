@@ -2,41 +2,50 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\OrderRequest;
-use App\Services\OrderService;
+use App\Http\Requests\StoreOrderRequest;
+use App\Http\Requests\UpdateOrderRequest;
 use App\Http\Resources\OrderResource;
+use App\Services\OrderService;
+use Illuminate\Http\JsonResponse;
 
 class OrderController extends Controller
 {
-    protected $orderService;
+    protected $service;
 
-    public function __construct(OrderService $orderService)
+    public function __construct(OrderService $service)
     {
-        $this->orderService = $orderService;
+        $this->service = $service;
     }
 
     public function index()
     {
-        $orders = $this->orderService->list();
+        $filters = request()->only('user_id');
+        $orders = $this->service->getAllOrders($filters);
         return OrderResource::collection($orders);
     }
+    
 
-    public function store(OrderRequest $request)
+    public function store(StoreOrderRequest $request)
     {
-        $order = $this->orderService->create($request->validated());
+        $order = $this->service->createOrder($request->validated());
         return new OrderResource($order);
     }
 
-    public function update(OrderRequest $request, $id)
+    public function show($id)
     {
-        $order = $this->orderService->update($id, $request->validated());
+        $order = $this->service->getOrderById($id);
+        return new OrderResource($order);
+    }
+
+    public function update(UpdateOrderRequest $request, $id)
+    {
+        $order = $this->service->updateOrder($id, $request->validated());
         return new OrderResource($order);
     }
 
     public function destroy($id)
     {
-        $this->orderService->delete($id);
+        $this->service->deleteOrder($id);
         return response()->json(['message' => 'Order deleted successfully']);
     }
 }
-
