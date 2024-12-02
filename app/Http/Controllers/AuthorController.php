@@ -33,4 +33,3 @@ class AuthorController extends Controller
         return response()->json(['message' => 'Author deleted successfully']);
     }
 }
-

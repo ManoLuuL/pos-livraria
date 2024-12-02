@@ -6,7 +6,6 @@ use App\Http\Requests\StoreOrderRequest;
 use App\Http\Requests\UpdateOrderRequest;
 use App\Http\Resources\OrderResource;
 use App\Services\OrderService;
-use Illuminate\Http\JsonResponse;
 
 class OrderController extends Controller
 {
@@ -23,7 +22,7 @@ class OrderController extends Controller
         $orders = $this->service->getAllOrders($filters);
         return OrderResource::collection($orders);
     }
-    
+
 
     public function store(StoreOrderRequest $request)
     {

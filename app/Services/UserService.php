@@ -36,4 +36,3 @@ class UserService
         return ['message' => 'Successfully logged out'];
     }
 }
-

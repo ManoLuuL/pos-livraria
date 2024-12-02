@@ -7,13 +7,18 @@ use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\JwtMiddleware;
+use App\Jobs\ProcessBestSellingBooksJob;
 
 Route::prefix('auth')->group(function () {
     Route::post('login', [UserController::class, 'login']);
     Route::post('register', [UserController::class, 'register']);
-    
 });
 
+Route::get('/test-job', function () {
+    ProcessBestSellingBooksJob::dispatch(30);
+
+    return response()->json(['message' => 'Job disparado com sucesso!']);
+});
 
 Route::get('/books', [BookController::class, 'index']);
 Route::get('/categories', [CategoryController::class, 'index']);

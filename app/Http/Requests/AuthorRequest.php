@@ -18,4 +18,3 @@ class AuthorRequest extends FormRequest
         ];
     }
 }
-

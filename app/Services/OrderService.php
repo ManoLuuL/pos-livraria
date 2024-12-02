@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Repositories\OrderRepository;
 use App\Models\Order;
-use Illuminate\Support\Facades\DB;
+
 
 class OrderService
 {
@@ -18,14 +18,14 @@ class OrderService
     public function getAllOrders($filters = [])
     {
         $query = Order::with('books');
-    
+
         if (!empty($filters['user_id'])) {
             $query->where('user_id', $filters['user_id']);
         }
-    
+
         return $query->paginate();
     }
-    
+
     public function getOrderById($id)
     {
         return $this->repository->getById($id);
@@ -33,7 +33,6 @@ class OrderService
 
     public function createOrder(array $data)
     {
-        DB::beginTransaction();
 
         try {
             $order = Order::create([
@@ -41,31 +40,25 @@ class OrderService
                 'total_price' => $data['total_price'],
             ]);
 
-          
+
             foreach ($data['book_ids'] as $book) {
                 $order->books()->attach($book['id'], ['quantity' => $book['quantity']]);
             }
 
-           
-            DB::commit();
+
 
             return $order;
         } catch (\Exception $e) {
-           
-            DB::rollBack();
             throw $e;
         }
     }
 
     public function updateOrder($id, array $data)
-{
-   
-
-   
+    {
         $order = $this->repository->getById($id);
 
         if (!empty($data['book_ids'])) {
-          
+
             $order->books()->detach();
 
             foreach ($data['book_ids'] as $book) {
@@ -73,10 +66,8 @@ class OrderService
             }
         }
 
-       
         return $order;
-   
-}
+    }
 
 
     public function deleteOrder($id)

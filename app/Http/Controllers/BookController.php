@@ -6,7 +6,6 @@ use App\Http\Requests\StoreBookRequest;
 use App\Http\Requests\UpdateBookRequest;
 use App\Http\Resources\BookResource;
 use App\Services\BookService;
-use Illuminate\Http\JsonResponse;
 
 class BookController extends Controller
 {

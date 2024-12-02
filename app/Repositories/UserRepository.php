@@ -11,4 +11,3 @@ class UserRepository
         return User::create($data);
     }
 }
-
