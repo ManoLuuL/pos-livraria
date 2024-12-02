@@ -15,9 +15,13 @@ Route::prefix('auth')->group(function () {
 });
 
 Route::get('/test-job', function () {
-    ProcessBestSellingBooksJob::dispatch(30);
+    $fileName = 'reports/order_report.json';
+    ProcessBestSellingBooksJob::dispatch($fileName);
 
-    return response()->json(['message' => 'Job disparado com sucesso!']);
+    return response()->json([
+        'message' => 'Relatório sendo gerado!',
+        'file_path' => storage_path("app/$fileName"),
+    ]);
 });
 
 Route::get('/books', [BookController::class, 'index']);
